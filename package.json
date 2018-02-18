@@ -1,0 +1,13 @@
+{
+  "name": "challenge-response-server",
+  "version": "0.0.1",
+  "description": "Server to support challenge response mobile application by handling public key storage and retrieval",
+  "main": "server.js",
+  "author": "Jack Harley",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^5.0.1",
+    "express": "^4.16.2"
+  },
+  "devDependencies": {}
+}
