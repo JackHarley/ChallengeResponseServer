@@ -6,8 +6,10 @@
   "author": "Jack Harley",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.18.2",
     "dotenv": "^5.0.1",
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "winston": "^2.4.0"
   },
   "devDependencies": {}
 }
