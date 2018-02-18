@@ -36,5 +36,6 @@ app.get('/', function (req, res) {
 
 // Startup
 logger.info("Starting server...");
-app.listen(process.env.SERVER_PORT);
-logger.info("Startup complete, now listening on port " + process.env.SERVER_PORT);
+app.listen(process.env.SERVER_PORT, function(res, err) {
+    logger.info("Startup complete, now listening on port " + process.env.SERVER_PORT);
+});
