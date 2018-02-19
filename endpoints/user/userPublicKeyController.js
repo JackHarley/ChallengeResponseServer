@@ -19,14 +19,14 @@ module.exports.postSetKey = async function(req, res) {
             email: email
         }).toArray();
         if (users.length === 0) {
-            res.status(404).send('No such user found, or the password provided was incorrect.').end();
+            res.status(404).send('No such user found.').end();
             return;
         }
 
-        // check password
+        // check activated+password
         let r = await bcrypt.compare(password, users[0].password_hash);
-        if (r === false) {
-            res.status(403).send('No such user found, or the password provided was incorrect.').end();
+        if ((users[0].verified === false) || (r === false)) {
+            res.status(403).send('Incorrect password or user account has not been verified.').end();
             return;
         }
 
