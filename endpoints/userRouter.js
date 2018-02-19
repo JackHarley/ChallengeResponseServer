@@ -8,6 +8,8 @@ router.route('/register').post(user.postRegisterUser); // New registration
 router.route('/verify').put(user.putVerifyUser); // User verification
 
 const userPublicKey = require('./user/userPublicKeyController');
-router.route('/pubkey/set').post(userPublicKey.postSetKey); // Set public key
+router.route('/pubkey')
+    .post(userPublicKey.postKey) // Set public key
+    .get(userPublicKey.getKey); // Get public key
 
 module.exports = router;
