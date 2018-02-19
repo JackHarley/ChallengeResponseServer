@@ -2,6 +2,7 @@
 
 const bcrypt = require('bcrypt');
 const assert = require('assert');
+const userHelper = require('./../../helpers/userHelper');
 
 module.exports.postKey = async function(req, res) {
     let publicKey = req.body.public_key;
@@ -14,30 +15,20 @@ module.exports.postKey = async function(req, res) {
     }
 
     try {
-        // search for user
-        let users = await db.collection('users').find({
-            email: email
-        }).toArray();
-        if (users.length === 0) {
-            res.status(404).send('No such user found.').end();
-            return;
-        }
-
-        // check activated+password
-        let r = await bcrypt.compare(password, users[0].password_hash);
-        if ((users[0].verified === false) || (r === false)) {
-            res.status(403).send('Incorrect password or user account has not been verified.').end();
+        let user = await userHelper.checkUser(email, password);
+        if (user === false) {
+            res.status(403).send('No such user exists, password incorrect, or not email verified.').end();
             return;
         }
 
         // check it's not the same
-        if (users[0].public_key === publicKey) {
+        if (user.public_key === publicKey) {
             res.status(200).send('No change to public key in database necessary.').end();
             return;
         }
 
         // update
-        r = await db.collection('users').updateOne({
+        let r = await db.collection('users').updateOne({
             email: req.body.email
         }, {$set: {
             public_key: publicKey,
