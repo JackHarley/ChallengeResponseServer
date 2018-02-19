@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const assert = require('assert');
 const randomString = require('randomstring');
+const userHelper = require('./../../helpers/userHelper');
 
 module.exports.postRegisterUser = async function(req, res) {
     let email = req.body.email;
@@ -81,6 +82,41 @@ module.exports.putVerifyUser = async function(req, res) {
     } catch(err) {
         res.status(500).send().end();
         logger.error('Failed to verify user, please try again later.');
+        console.log(err);
+    }
+};
+
+module.exports.postSetPassword = async function(req, res) {
+    let email = req.body.email;
+    let password = req.body.password;
+    let newPassword = req.body.new_password;
+
+    if ((newPassword == null) || (email == null) || (password == null)) {
+        res.status(400).send('You must provide an email, password and new password').end();
+        return;
+    }
+
+    try {
+        let user = await userHelper.checkUser(email, password);
+        if (user === false) {
+            res.status(403).send('No such user exists, password incorrect, or not email verified.').end();
+            return;
+        }
+
+        // set new password
+        let r = await db.collection('users').updateOne({
+            email: email
+        }, {$set: {
+            password_hash: await bcrypt.hash(newPassword, saltRounds)
+        }});
+
+        // verify
+        assert.equal(r.matchedCount, 1);
+
+        res.status(204).send();
+    } catch(err) {
+        res.status(500).send().end();
+        logger.error('Failed to change password, please try again later.');
         console.log(err);
     }
 };
