@@ -12,6 +12,8 @@ module.exports = async function() {
         logger.info("Connected to database successfully.");
 
         global.db = db;
+
+        return true;
     } catch(err) {
         logger.error('Failed to connect to MongoDB database, exiting, please check your config');
         process.exit(1);

@@ -12,31 +12,31 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 // Database
-require('./db')();
+require('./db')().then((res) => {
+    // Express server
+    const server = express();
 
-// Express server
-const server = express();
+    // Middleware
+    logger.info("Loading middleware...");
+    const log = require('./middleware/log');
+    server.use(log);
+    server.use(bodyParser.urlencoded({ extended: true }));
+    server.use(bodyParser.json());
 
-// Middleware
-logger.info("Loading middleware...");
-const log = require('./middleware/log');
-server.use(log);
-server.use(bodyParser.urlencoded({ extended: true }));
-server.use(bodyParser.json());
+    // Routers
+    logger.info("Registering routers...");
+    let userRouter = require('./endpoints/userRouter');
+    server.use('/user', userRouter);
 
-// Routers
-logger.info("Registering routers...");
-let userRouter = require('./endpoints/userRouter');
-server.use('/user', userRouter);
+    // Index
+    logger.info("Registering an index...");
+    server.get('/', function (req, res) {
+        res.status(200).send('Ready.');
+    });
 
-// Index
-logger.info("Registering an index...");
-server.get('/', function (req, res) {
-    res.status(200).send('Ready.');
-});
-
-// Startup
-logger.info("Starting server...");
-server.listen(process.env.SERVER_PORT, function(res, err) {
-    logger.info("Startup complete, now listening on port " + process.env.SERVER_PORT);
-});
+    // Startup
+    logger.info("Starting server...");
+    server.listen(process.env.SERVER_PORT, function(res, err) {
+        logger.info("Startup complete, now listening on port " + process.env.SERVER_PORT);
+    });
+}, (err) => {});
