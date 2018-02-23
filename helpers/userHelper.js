@@ -1,6 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
+const emailHelper = require('./emailHelper');
 
 module.exports.checkUser = async function(email, password) {
     try {
@@ -22,4 +23,21 @@ module.exports.checkUser = async function(email, password) {
     } catch(err) {
         throw err;
     }
+};
+
+module.exports.sendVerificationEmail = async function(email, key) {
+    let link = process.env.SERVER_URL + '/user/verify?key=' + key;
+
+    emailHelper.sendEmail(email, 'Verify your account',
+`Hi!
+
+Thanks for signing up, please click the link below to verify your account:
+
+${link}
+
+If you did not sign up for our service, please simply disregard this email.
+
+Thanks!`);
+
+    return true;
 };
