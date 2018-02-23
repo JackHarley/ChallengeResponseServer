@@ -2,8 +2,10 @@
 ![version 0.0.1](https://img.shields.io/badge/version-0.0.1-red.svg)
 
 This is a simple web application which provides a RESTful API service with the following capabilities:
-* User registration with a public key, including email verification
-* Public key retrieval by any party who has a valid email address
+* User registration, including email verification
+* User change password/recover password if forgotten
+* Public key upload
+* Public key retrieval by any party for a specified email address
 
 It is used to support the Challenge Response Mobile Application developed in tandem with the application.
 
