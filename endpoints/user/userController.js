@@ -91,6 +91,36 @@ module.exports.putVerifyUser = async function(req, res) {
     }
 };
 
+module.exports.postResendVerificationEmail = async function(req, res) {
+    let email = req.body.email;
+
+    if (email == null) {
+        res.status(400).send('You must provide an email.').end();
+        return;
+    }
+
+    try {
+        let users = await db.collection('users').find({
+            email: email,
+            verified: false
+        }).toArray();
+
+        if (users.length !== 1) {
+            res.status(404).send('No such email address requiring verification found.').end();
+            return;
+        }
+
+        // send verification email
+        userHelper.sendVerificationEmail(email, users[0].verification_key);
+
+        res.status(204).send();
+    } catch(err) {
+        res.status(500).send().end();
+        logger.error('Failed to resend verification email, please try again later.');
+        console.log(err);
+    }
+};
+
 module.exports.postSetPassword = async function(req, res) {
     let email = req.body.email;
     let password = req.body.password;
