@@ -28,7 +28,7 @@ module.exports.checkUser = async function(email, password) {
 module.exports.sendVerificationEmail = async function(email, key) {
     let link = process.env.SERVER_URL + '/user/verify?key=' + key;
 
-    emailHelper.sendEmail(email, 'Verify your account',
+    return await emailHelper.sendEmail(email, 'Verify your account',
 `Hi!
 
 Thanks for signing up, please click the link below to verify your account:
@@ -38,6 +38,4 @@ ${link}
 If you did not sign up for our service, please simply disregard this email.
 
 Thanks!`);
-
-    return true;
 };

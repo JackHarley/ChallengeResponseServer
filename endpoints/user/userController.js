@@ -24,20 +24,25 @@ module.exports.postRegisterUser = async function(req, res) {
         }
 
         // insert new record
+        let key = randomString.generate({
+            length: 32,
+            charset: 'alphanumeric',
+            capitalization: 'lowercase'
+        });
+
         let r = await db.collection('users').insertOne({
             email: email,
             password_hash: await bcrypt.hash(password, saltRounds),
             verified: false,
-            verification_key: randomString.generate({
-                length: 32,
-                charset: 'alphanumeric',
-                capitalization: 'lowercase'
-            }),
+            verification_key: key,
             date_registered: new Date()
         });
 
         // verify
         assert.equal(r.insertedCount, 1);
+
+        // send verification email
+        userHelper.sendVerificationEmail(email, key);
 
         res.status(201).send();
     } catch(err) {
