@@ -52,7 +52,7 @@ module.exports.postRegisterUser = async function(req, res) {
     }
 };
 
-module.exports.putVerifyUser = async function(req, res) {
+module.exports.getVerifyUser = async function(req, res) {
     let key = req.query.key;
 
     if (key == null) {
@@ -83,7 +83,7 @@ module.exports.putVerifyUser = async function(req, res) {
         assert.equal(r.matchedCount, 1);
         assert.equal(r.modifiedCount, 1);
 
-        res.status(200).send();
+        res.status(204).send();
     } catch(err) {
         res.status(500).send().end();
         logger.error('Failed to verify user, please try again later.');
