@@ -32,7 +32,7 @@ Completes a user registration by verification key.
 
 **Responses:**
 
-* If verification is successful, 204 NO CONTENT.
+* If verification is successful, 200 OK with a HTML body.
 * If no key is provided, 400 BAD REQUEST.
 * If the provided key is not valid/already used, 404 NOT FOUND.
 
