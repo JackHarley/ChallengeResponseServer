@@ -28,13 +28,13 @@ GET /user/verify?key=x
 
 * key: Verification key from email
 
-Completes a user registration by verification key.
+Completes a user registration by verification key. This is a browser facing endpoint, it returns nicely formatted HTML.
 
 **Responses:**
 
-* If verification is successful, 200 OK with a HTML body.
-* If no key is provided, 400 BAD REQUEST.
-* If the provided key is not valid/already used, 404 NOT FOUND.
+* If verification is successful, 200 OK and a verification complete message.
+* If no key is provided, 400 BAD REQUEST and a verification failed message.
+* If the provided key is not valid/already used, 404 NOT FOUND and a verification failed message.
 
 POST /user/reverify
 ------------------------------

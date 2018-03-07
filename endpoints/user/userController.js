@@ -56,7 +56,7 @@ module.exports.getVerifyUser = async function(req, res) {
     let key = req.query.key;
 
     if (key == null) {
-        res.status(400).send('You must provide a valid verification key.').end();
+        res.status(400).sendFile('user/verification_failed.html', { root: __dirname + '/../../views' });
         return;
     }
 
@@ -67,7 +67,7 @@ module.exports.getVerifyUser = async function(req, res) {
             verification_key: key
         }).toArray();
         if (users.length === 0) {
-            res.status(404).send('No such verification key found.').end();
+            res.status(404).sendFile('user/verification_failed.html', { root: __dirname + '/../../views' });
             return;
         }
 
@@ -85,7 +85,7 @@ module.exports.getVerifyUser = async function(req, res) {
 
         res.status(200).sendFile('user/verification_complete.html', { root: __dirname + '/../../views' });
     } catch(err) {
-        res.status(500).send().end();
+        res.status(500).sendFile('user/verification_failed.html', { root: __dirname + '/../../views' });
         logger.error('Failed to verify user, please try again later.');
         console.log(err);
     }
