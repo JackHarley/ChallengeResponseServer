@@ -83,7 +83,7 @@ module.exports.getVerifyUser = async function(req, res) {
         assert.equal(r.matchedCount, 1);
         assert.equal(r.modifiedCount, 1);
 
-        res.status(204).send();
+        res.status(200).sendFile('user/verification_complete.html', { root: __dirname + '/../../views' });
     } catch(err) {
         res.status(500).send().end();
         logger.error('Failed to verify user, please try again later.');
