@@ -4,7 +4,8 @@ const nodeMailer = require('nodemailer');
 
 module.exports.sendEmail = async function(to, subject, content) {
     let transporter = nodeMailer.createTransport({
-        sendmail: true
+        sendmail: true,
+        path: '/usr/sbin/sendmail'
     });
 
     try {
