@@ -19,7 +19,6 @@ module.exports.sendEmail = async function(to, subject, content) {
         return true;
     } catch(err) {
         logger.error('Failed to send mail to ' + to + ', subject: ' + subject);
-        console.log(err);
 
         return false;
     }
