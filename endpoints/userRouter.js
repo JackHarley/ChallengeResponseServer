@@ -5,6 +5,7 @@ let router = new express.Router();
 
 const user = require('./user/userController');
 router.route('/register').post(user.postRegisterUser); // New registration
+router.route('/login').post(user.postCheckCredentials); // User check credentials (login)
 router.route('/verify').get(user.getVerifyUser); // User verification
 router.route('/reverify').post(user.postResendVerificationEmail); // User verification email resend
 router.route('/password').post(user.postSetPassword); // Change password

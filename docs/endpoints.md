@@ -22,6 +22,24 @@ Registers a new user account and sends a verification email to the specified ema
 * If an email address/password is not provided, 400 BAD REQUEST.
 * If the email address is already taken, 400 BAD REQUEST.
 
+POST /user/login
+------------------------------
+**Body:**
+```js
+{
+	"email": "jackpharley@gmail.com",
+	"password": "qwertyuiop123"
+}
+```
+
+Checks the credentials against the database and returns whether they are valid or not.
+
+**Responses:**
+
+* If the user exists, is valid and is email verified, 200 OK with a body containing the string true
+* Otherwise, 200 OK with a body containing the string false.
+* If an email address/password is not provided, 400 BAD REQUEST.
+
 GET /user/verify?key=x
 ------------------------------
 **Query Parameters:**

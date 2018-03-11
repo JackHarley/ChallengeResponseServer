@@ -150,8 +150,29 @@ module.exports.postSetPassword = async function(req, res) {
 
         res.status(204).send();
     } catch(err) {
-        res.status(500).send().end();
-        logger.error('Failed to change password, please try again later.');
-        console.log(err);
+        res.status(500).send('Failed to change password, please try again later.').end();
+        logger.error('Failed to change password.');
+    }
+};
+
+module.exports.postCheckCredentials = async function(req, res) {
+    let email = req.body.email;
+    let password = req.body.password;
+
+    if ((email == null) || (password == null)) {
+        res.status(400).send('You must provide an email and password').end();
+        return;
+    }
+
+    try {
+        let user = await userHelper.checkUser(email, password);
+        if (user === false) {
+            res.status(200).send(false).end();
+        } else {
+            res.status(200).send(true).end();
+        }
+    } catch(err) {
+        res.status(500).send('Failed to check credentials, please try again later.').end();
+        logger.error('Failed to check credentials.');
     }
 };
