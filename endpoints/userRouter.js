@@ -9,6 +9,11 @@ router.route('/login').post(user.postCheckCredentials); // User check credential
 router.route('/verify').get(user.getVerifyUser); // User verification
 router.route('/reverify').post(user.postResendVerificationEmail); // User verification email resend
 router.route('/password').post(user.postSetPassword); // Change password
+router.route('/forgotpassword')
+	.post(user.postForgotPassword) // Forgot password
+	.get(user.getForgotPassword); // Forgot password form
+router.route('/forgotpassword/complete').post(user.postForgotPasswordComplete); // Forgot password complete (change password)
+
 
 const userPublicKey = require('./user/userPublicKeyController');
 router.route('/pubkey')

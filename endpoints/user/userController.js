@@ -46,9 +46,8 @@ module.exports.postRegisterUser = async function(req, res) {
 
         res.status(201).send();
     } catch(err) {
-        res.status(500).send().end();
-        logger.error('Failed to register user, please try again later.');
-        console.log(err);
+        res.status(500).send('Failed to register user, please try again later.').end();
+        logger.error('Failed to register user.');
     }
 };
 
@@ -152,6 +151,119 @@ module.exports.postSetPassword = async function(req, res) {
     } catch(err) {
         res.status(500).send('Failed to change password, please try again later.').end();
         logger.error('Failed to change password.');
+    }
+};
+
+module.exports.postForgotPassword = async function(req, res) {
+    let email = req.body.email;
+
+    if ((email == null) || (password == null)) {
+        res.status(400).send('You must provide an email.').end();
+        return;
+    }
+
+    try {
+        // check for email existence
+        let users = await db.collection('users').find({'email': email}).toArray();
+        if (users.length === 0) {
+            res.status(404).send('Email address is not found.').end();
+            return;
+        }
+
+        // generate password reset key
+        let key = randomString.generate({
+            length: 32,
+            charset: 'alphanumeric',
+            capitalization: 'lowercase'
+        });
+
+        let r = await db.collection('users').updateOne({
+            email: email
+        }, {$set: {
+            forgot_password_key: key,
+            forgot_password_initiation: new Date()
+        }});
+
+        // verify
+        assert.equal(r.updatedCount, 1);
+
+        // send email
+        userHelper.sendForgotPasswordEmail(email, key);
+
+        res.status(201).send();
+    } catch(err) {
+        res.status(500).send('Failed to initiate password reset, please try again later.').end();
+    }
+};
+
+module.exports.getForgotPassword = async function(req, res) {
+    let key = req.query.key;
+
+    if (key == null) {
+        res.status(400).sendFile('user/password_reset_failed.html', { root: __dirname + '/../../views' });
+        return;
+    }
+
+    try {
+        // search for user
+        let users = await db.collection('users').find({
+            forgot_password_key: key
+        }).toArray();
+        if (users.length === 0) {
+            res.status(404).sendFile('user/password_reset_failed.html', { root: __dirname + '/../../views' });
+            return;
+        }
+        if (new Date(users[0].forgot_password_initiation) + 1000*60*60*24 < new Date()) {
+            res.status(403).sendFile('user/password_reset_failed.html', { root: __dirname + '/../../views' });
+            return;
+        }
+
+        // show form
+        res.status(200).sendFile('user/password_reset.html', { root: __dirname + '/../../views' });
+    } catch(err) {
+        res.status(500).sendFile('user/password_reset_failed.html', { root: __dirname + '/../../views' });
+    }
+};
+
+module.exports.postForgotPasswordComplete = async function(req, res) {
+    let key = req.query.key;
+    let password = req.body.new_password;
+    let confirm_password = req.body.confirm_new_password;
+
+    if ((key == null) || (password == null) || (confirm_password == null) || (password !== confirm_password)) {
+        res.status(400).sendFile('user/password_reset_failed.html', { root: __dirname + '/../../views' });
+        return;
+    }
+
+    try {
+        // search for user
+        let users = await db.collection('users').find({
+            forgot_password_key: key
+        }).toArray();
+        if (users.length === 0) {
+            res.status(404).sendFile('user/password_reset_failed.html', { root: __dirname + '/../../views' });
+            return;
+        }
+        if (new Date(users[0].forgot_password_initiation) + 1000*60*60*24 < new Date()) {
+            res.status(403).sendFile('user/password_reset_failed.html', { root: __dirname + '/../../views' });
+            return;
+        }
+
+        // set new password
+        let r = await db.collection('users').updateOne({
+            forgot_password_key: key
+        }, {$set: {
+            password_hash: await bcrypt.hash(newPassword, saltRounds),
+            forgot_password_key: undefined,
+            forgot_password_initiation: undefined
+        }});
+
+        // verify
+        assert.equal(r.matchedCount, 1);
+
+        res.status(200).sendFile('user/password_reset_complete.html', { root: __dirname + '/../../views' });
+    } catch(err) {
+        res.status(500).sendFile('user/password_reset_failed.html', { root: __dirname + '/../../views' });
     }
 };
 

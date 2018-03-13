@@ -39,3 +39,18 @@ If you did not sign up for our service, please simply disregard this email.
 
 Thanks!`);
 };
+
+module.exports.sendForgotPasswordEmail = async function(email, key) {
+    let link = process.env.SERVER_URL + '/user/forgotpassword?key=' + key;
+
+    return await emailHelper.sendEmail(email, 'Reset Password',
+`Hi!
+
+A password reset was requested for your account, if this was not you, please simply ignore this email.
+
+To change your password, please click the below think and follow the instructions
+
+${link}
+
+Thanks!`);
+};

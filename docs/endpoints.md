@@ -90,6 +90,61 @@ Change the password for a user account.
 * If any of the body parameters are missing, 400 BAD REQUEST.
 * If the provided email is not valid, the provided password is incorrect, or the account is not verified, 403 FORBIDDEN.
 
+POST /user/forgotpassword
+------------------------------
+**Body:**
+```js
+{
+	"email": "jackpharley@gmail.com"
+}
+```
+
+Begin the password reset process for an account. An email with instructions will be sent to the email address.
+
+**Responses:**
+
+* If the password reset process has been initiated successfully, 201 CREATED.
+* If an email address is not provided, 400 BAD REQUEST.
+* If the provided email does not exist in the system, 404 NOT FOUND
+
+GET /user/forgotpassword?key=x
+------------------------------
+**Query Parameters:**
+
+* key: Forgot password key from email
+
+Shows the form for resetting your password for the account associated with the given key. This is a browser facing endpoint, it returns nicely formatted HTML.
+
+**Responses:**
+
+* If the key is valid and useable, 200 OK and shows the change password form.
+* If key is not provided, 400 BAD REQUEST.
+* If key does not exist, 404 NOT FOUND.
+* If key is expired, 403 FORBIDDEN
+
+POST /user/forgotpassword/complete?key=x
+------------------------------
+**Query Parameters:**
+
+* key: Forgot password key from email
+
+**Body:**
+```js
+{
+	"new_password": "password123",
+	"confirm_new_password": "password123",
+}
+```
+
+Attempts to change the password for the account associated with the given forgot password key. This is a browser facing endpoint, it returns nicely formatted HTML.
+
+**Responses:**
+
+* If the password reset process has been completed successfully, 200 OK.
+* If any query/body parameters are not provided, 400 BAD REQUEST.
+* If key does not exist, 404 NOT FOUND.
+* If key is expired, 403 FORBIDDEN
+
 POST /user/pubkey
 ------------------------------
 **Body:**
