@@ -7,7 +7,7 @@
 POST /user/register
 ------------------------------
 **Body:**
-```js
+```json
 {
 	"email": "jackpharley@gmail.com",
 	"password": "qwertyuiop123"
@@ -25,7 +25,7 @@ Registers a new user account and sends a verification email to the specified ema
 POST /user/login
 ------------------------------
 **Body:**
-```js
+```json
 {
 	"email": "jackpharley@gmail.com",
 	"password": "qwertyuiop123"
@@ -57,7 +57,7 @@ Completes a user registration by verification key. This is a browser facing endp
 POST /user/reverify
 ------------------------------
 **Body:**
-```js
+```json
 {
 	"email": "jackpharley@gmail.com"
 }
@@ -74,7 +74,7 @@ Resends the verification email for the account belonging to the specified email 
 POST /user/password
 ------------------------------
 **Body:**
-```js
+```json
 {
 	"email": "jackpharley@gmail.com",
 	"password": "qwertyuiop123",
@@ -93,7 +93,7 @@ Change the password for a user account.
 POST /user/forgotpassword
 ------------------------------
 **Body:**
-```js
+```json
 {
 	"email": "jackpharley@gmail.com"
 }
@@ -129,7 +129,7 @@ POST /user/forgotpassword/complete?key=x
 * key: Forgot password key from email
 
 **Body:**
-```js
+```json
 {
 	"new_password": "password123",
 	"confirm_new_password": "password123",
@@ -148,7 +148,7 @@ Attempts to change the password for the account associated with the given forgot
 POST /user/pubkey
 ------------------------------
 **Body:**
-```js
+```json
 {
 	"email": "jackpharley@gmail.com",
 	"password": "correcthorsebatterystaple",
@@ -176,7 +176,7 @@ Fetch a public key for a specified email address.
 **Responses:**
 
 * If a public key is found, 200 OK:
-```js
+```json
 {
 	"email": "jackpharley@gmail.com",
 	"public_key": "BIGFATRESAPRIVATEKEYTHINGYMAJIG",
