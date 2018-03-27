@@ -255,11 +255,11 @@ Look up the status of a challenge.
 }
 ```
 
+* If any query/url parameters are not provided, 400 BAD REQUEST.
+* If a matching challenge could not be found, 404 NOT FOUND.
+
 **Challenge Status Codes:**
 
 * 1 - Challenge complete and verified.
 * 0 - Not yet completed.
 * -1 - Challenge failed (expired with no valid responses).
-
-* If any query/url parameters are not provided, 400 BAD REQUEST.
-* If a matching challenge could not be found, 404 NOT FOUND.
