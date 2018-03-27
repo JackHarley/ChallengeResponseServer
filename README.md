@@ -6,6 +6,7 @@ This is a simple web application which provides a RESTful API service with the f
 * User change password/recover password if forgotten
 * Public key upload
 * Public key retrieval by any party for a specified email address
+* Challenge/response functionality with the server acting as a middleman
 
 It is used to support the Challenge Response Mobile Application developed in tandem with the application.
 
