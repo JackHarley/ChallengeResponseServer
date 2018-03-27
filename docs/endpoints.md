@@ -233,3 +233,33 @@ Check for a waiting challenge for the specified email address with the specified
 
 * If any query parameters are not provided, 400 BAD REQUEST.
 * If a matching challenge could not be found, 404 NOT FOUND.
+
+GET /challenge/9386727543489512?pin=1798
+------------------------------
+**Query Parameters:**
+
+* pin: PIN of challenge
+
+**URL Parameters:**
+
+* challengeId: e.g. /challenge/{challengeId}?pin=x
+
+Look up the status of a challenge.
+
+**Responses:**
+
+* If a challenge is found, 200 OK with challenge status code:
+```json
+{
+    "status": 1
+}
+```
+
+**Challenge Status Codes:**
+
+* 1 - Challenge complete and verified.
+* 0 - Not yet completed.
+* -1 - Challenge failed (expired with no valid responses).
+
+* If any query/url parameters are not provided, 400 BAD REQUEST.
+* If a matching challenge could not be found, 404 NOT FOUND.

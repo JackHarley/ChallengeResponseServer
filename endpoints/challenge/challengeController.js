@@ -59,7 +59,7 @@ module.exports.getLookup = async function(req, res) {
         // try find a challenge
         const challenges = await db.collection('challenges').find({
             recipient_email: email,
-            pin: pin,
+            pin: String(pin),
             verified: false,
             date: {$gte: new Date(new Date() - (300 * 1000))} // only challenges < 5 minutes old are valid
         }).toArray();
@@ -74,7 +74,38 @@ module.exports.getLookup = async function(req, res) {
             blob: challenges[0].blob
         }).send();
     } catch(err) {
-        res.status(500).send('Failed to initiate challenge, please try again later..').end();
-        logger.error('Failed to initiate challenge.');
+        res.status(500).send('Failed to lookup challenge, please try again later..').end();
+        logger.error('Failed to lookup challenge.');
+    }
+};
+
+module.exports.get = async function(req, res) {
+    const challengeId = req.params.challengeId;
+    const pin = req.query.pin;
+
+    if ((challengeId == null) || (pin == null)) {
+        res.status(400).send('You must provide a challenge ID and PIN.').end();
+        return;
+    }
+
+    try {
+        // try find a challenge
+        const challenges = await db.collection('challenges').find({challenge_id: challengeId, pin: String(pin)}).toArray();
+        if (challenges.length < 1) {
+            res.status(404).send('No challenges matching your query.').end();
+            return;
+        }
+
+        // determine status
+        let status = 0;
+        if (challenges[0].verified === true)                                            status = 1;
+        else if (new Date(challenges[0].date) < new Date(new Date() - (300 * 1000)))    status = -1;
+
+        res.status(200).json({
+            status: status
+        }).send();
+    } catch(err) {
+        res.status(500).send('Failed to query challenge, please try again later..').end();
+        logger.error('Failed to query challenge.');
     }
 };
