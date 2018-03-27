@@ -9,8 +9,8 @@ POST /user/register
 **Body:**
 ```json
 {
-	"email": "jackpharley@gmail.com",
-	"password": "qwertyuiop123"
+    "email": "jackpharley@gmail.com",
+    "password": "qwertyuiop123"
 }
 ```
 
@@ -27,8 +27,8 @@ POST /user/login
 **Body:**
 ```json
 {
-	"email": "jackpharley@gmail.com",
-	"password": "qwertyuiop123"
+    "email": "jackpharley@gmail.com",
+    "password": "qwertyuiop123"
 }
 ```
 
@@ -59,7 +59,7 @@ POST /user/reverify
 **Body:**
 ```json
 {
-	"email": "jackpharley@gmail.com"
+    "email": "jackpharley@gmail.com"
 }
 ```
 
@@ -76,9 +76,9 @@ POST /user/password
 **Body:**
 ```json
 {
-	"email": "jackpharley@gmail.com",
-	"password": "qwertyuiop123",
-	"new_password": "correcthorsebatterystaple"
+    "email": "jackpharley@gmail.com",
+    "password": "qwertyuiop123",
+    "new_password": "correcthorsebatterystaple"
 }
 ```
 
@@ -95,7 +95,7 @@ POST /user/forgotpassword
 **Body:**
 ```json
 {
-	"email": "jackpharley@gmail.com"
+    "email": "jackpharley@gmail.com"
 }
 ```
 
@@ -131,8 +131,8 @@ POST /user/forgotpassword/complete?key=x
 **Body:**
 ```json
 {
-	"new_password": "password123",
-	"confirm_new_password": "password123",
+    "new_password": "password123",
+    "confirm_new_password": "password123",
 }
 ```
 
@@ -150,9 +150,9 @@ POST /user/pubkey
 **Body:**
 ```json
 {
-	"email": "jackpharley@gmail.com",
-	"password": "correcthorsebatterystaple",
-	"public_key": "BIGFATRESAPRIVATEKEYTHINGYMAJIG"
+    "email": "jackpharley@gmail.com",
+    "password": "correcthorsebatterystaple",
+    "public_key": "BIGFATRESAPRIVATEKEYTHINGYMAJIG"
 }
 ```
 
@@ -178,11 +178,58 @@ Fetch a public key for a specified email address.
 * If a public key is found, 200 OK:
 ```json
 {
-	"email": "jackpharley@gmail.com",
-	"public_key": "BIGFATRESAPRIVATEKEYTHINGYMAJIG",
-	"date_key_updated": "2018-03-06T19:34:25.908Z"
+    "email": "jackpharley@gmail.com",
+    "public_key": "BIGFATRESAPRIVATEKEYTHINGYMAJIG",
+    "date_key_updated": "2018-03-06T19:34:25.908Z"
 }
 ```
 
 * If no email address is provided, or an invalid email address, 400 BAD REQUEST.
 * If an email address is provided but does not exist in the system/is not activated/does not have a public key on file, 404 NOT FOUND.
+
+POST /challenge/begin
+------------------------------
+**Body:**
+```json
+{
+    "email": "jackpharley@gmail.com"
+}
+```
+
+Begin a challenge against the specified recipient's email.
+
+**Responses:**
+
+* If the email address exists and a challenge is successfully initiated, return 201 CREATED and the details of the challenge:
+
+```json
+{
+    "challenge_id": "2882630291078996",
+    "pin": 9018
+}
+```
+
+* If no email address is provided, or an invalid email address, 400 BAD REQUEST.
+* If an email address is provided but does not exist in the system/is not activated, 404 NOT FOUND.
+
+GET /challenge/lookup
+------------------------------
+**Query Parameters:**
+
+* email: Email address to look up awaiting challenge for
+* pin: PIN of expected challenge
+
+Check for a waiting challenge for the specified email address with the specified PIN.
+
+**Responses:**
+
+* If a challenge is found, 200 OK with challenge info:
+```json
+{
+    "challenge_id": "2882630291078996",
+    "blob": "y6oks2qi2wwhdv3cny3m5brecbji4q9ol9m45klb8fkvsmdf93ycpdfskgwpbvzru8ntg7chew4pa23qmha6q8nkzcw4i6l1f7uytgyrw15nulwb1dii43r23ijt84vkopcrthhjx4reyz9gug1t2fwmtwqs5oygnerdqeq5hvc8wljjeolkzopuyw914643tqy0fl6iq6z9gyecxnkyaa7ehn65jbgcg559zyxh7u21l80uo88dg3lnwzu2mfwr"
+}
+```
+
+* If any query parameters are not provided, 400 BAD REQUEST.
+* If a matching challenge could not be found, 404 NOT FOUND.

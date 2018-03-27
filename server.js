@@ -25,8 +25,10 @@ require('./db')().then((res) => {
 
     // Routers
     logger.info("Registering routers...");
-    let userRouter = require('./endpoints/userRouter');
+    const userRouter = require('./endpoints/userRouter');
     server.use('/user', userRouter);
+    const challengeRouter = require('./endpoints/challengeRouter');
+    server.use('/challenge', challengeRouter);
 
     // Index
     logger.info("Registering an index...");
