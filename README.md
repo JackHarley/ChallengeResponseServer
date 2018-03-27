@@ -1,5 +1,5 @@
 # Challenge Response Server
-![version 0.0.1](https://img.shields.io/badge/version-0.0.1-red.svg)
+![version 1.0.0](https://img.shields.io/badge/version-1.0.0-green.svg)
 
 This is a simple web application which provides a RESTful API service with the following capabilities:
 * User registration, including email verification
