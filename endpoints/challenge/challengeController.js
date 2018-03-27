@@ -26,7 +26,7 @@ module.exports.postBegin = async function(req, res) {
         const r = await db.collection('challenges').insertOne({
             challenge_id: challengeId,
             recipient_email: email,
-            pin: parseInt(pin),
+            pin: pin,
             blob: randomString.generate({length: 256, charset: 'alphanumeric', capitalization: 'lowercase'}),
             verified: false,
             date: new Date()
@@ -59,7 +59,7 @@ module.exports.getLookup = async function(req, res) {
         // try find a challenge
         const challenges = await db.collection('challenges').find({
             recipient_email: email,
-            pin: parseInt(pin),
+            pin: pin,
             verified: false,
             date: {$gte: new Date(new Date() - (300 * 1000))} // only challenges < 5 minutes old are valid
         }).toArray();
