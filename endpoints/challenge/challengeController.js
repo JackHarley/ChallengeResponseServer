@@ -1,6 +1,7 @@
 'use strict';
 
 const assert = require('assert');
+const crypto = require('crypto');
 const randomString = require('randomstring');
 
 module.exports.postBegin = async function(req, res) {
@@ -27,7 +28,7 @@ module.exports.postBegin = async function(req, res) {
             challenge_id: challengeId,
             recipient_email: email,
             pin: pin,
-            blob: randomString.generate({length: 256, charset: 'alphanumeric', capitalization: 'lowercase'}),
+            blob: randomString.generate({length: 128, charset: 'alphanumeric', capitalization: 'lowercase'}),
             verified: false,
             date: new Date()
         });
@@ -68,10 +69,24 @@ module.exports.getLookup = async function(req, res) {
             return;
         }
 
+        // get recipient public key
+        const users = await db.collection('users').find({
+            email: email,
+            verified: true,
+            public_key: {$exists: true}
+        }).toArray();
+        if (users.length < 1) {
+            res.status(404).send('Email address is not a valid user or does not have a valid public key uploaded.').end();
+            return;
+        }
+
         // return data
+        let buffer = new Buffer(challenges[0].blob);
+        let encrypted = crypto.publicEncrypt(users[0].public_key, buffer);
+
         res.status(200).json({
             challenge_id: challenges[0].challenge_id,
-            blob: challenges[0].blob
+            blob: encrypted.toString('base64')
         }).send();
     } catch(err) {
         res.status(500).send('Failed to lookup challenge, please try again later..').end();
