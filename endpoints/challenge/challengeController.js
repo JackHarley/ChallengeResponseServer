@@ -105,7 +105,56 @@ module.exports.get = async function(req, res) {
             status: status
         }).send();
     } catch(err) {
-        res.status(500).send('Failed to query challenge, please try again later..').end();
+        res.status(500).send('Failed to query challenge, please try again later.').end();
         logger.error('Failed to query challenge.');
+    }
+};
+
+module.exports.postComplete = async function(req, res) {
+    const challengeId = req.params.challengeId;
+    const pin = req.body.pin;
+    const signature = req.body.signature;
+
+    if ((challengeId == null) || (pin == null) || (signature == null)) {
+        res.status(400).send('You must provide a challenge ID, pin and signature.').end();
+        return;
+    }
+
+    try {
+        // pull the challenge
+        const challenges = await db.collection('challenges').find({
+            challenge_id: challengeId,
+            pin: String(pin),
+            verified: false,
+            date: {$gte: new Date(new Date() - (300 * 1000))} // only challenges < 5 minutes old are valid
+        }).toArray();
+        if (challenges.length < 1) {
+            res.status(404).send('No valid challenge as specified, awaiting response.').end();
+            return;
+        }
+
+        // verify sig
+        if (signature !== challenges[0].blob) {
+            res.status(403).send('Invalid signature.').end();
+            return;
+        }
+
+        // mark verified
+        let r = await db.collection('challenges').updateOne({
+            challenge_id: challengeId,
+            pin: String(pin),
+            verified: false,
+        }, {$set: {
+            verified: true
+        }});
+
+        // verify
+        assert.equal(r.matchedCount, 1);
+        assert.equal(r.modifiedCount, 1);
+
+        res.status(200).send();
+    } catch(err) {
+        res.status(500).send('Failed to complete challenge, please try again later.').end();
+        logger.error('Failed to complete challenge.');
     }
 };
