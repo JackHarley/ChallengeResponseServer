@@ -165,6 +165,29 @@ Upload a public key to be held on file.
 * If any of the body parameters are missing, 400 BAD REQUEST.
 * If the provided email is not valid, the provided password is incorrect, or the account is not verified, 403 FORBIDDEN.
 
+POST /user/pubkey/generate
+------------------------------
+**Body:**
+```json
+{
+    "email": "jackpharley@gmail.com",
+    "password": "correcthorsebatterystaple"
+}
+```
+
+Generates a fresh private key on the server, stores the public key on the server, returns the private key to the client, then discards the private key on the server side.
+
+**Responses:**
+
+* If a key is generated successfully, 201 CREATED with a body containing the private key:
+```json
+{
+    "private_key": "--- BEGIN RSA PRIVATE KEY ---\n[...]\n--- END RSA PRIVATE KEY ---"
+}
+```
+* If any of the body parameters are missing, 400 BAD REQUEST.
+* If the provided email is not valid, the provided password is incorrect, or the account is not verified, 403 FORBIDDEN.
+
 GET /user/pubkey?email=jackpharley@gmail.com
 ------------------------------
 **Query Parameters:**

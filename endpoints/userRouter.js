@@ -19,5 +19,6 @@ const userPublicKey = require('./user/userPublicKeyController');
 router.route('/pubkey')
     .post(userPublicKey.postKey) // Set public key
     .get(userPublicKey.getKey); // Get public key
+router.route('/pubkey/generate').post(userPublicKey.postGenerateKeys);
 
 module.exports = router;

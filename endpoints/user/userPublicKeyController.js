@@ -1,6 +1,7 @@
 'use strict';
 
 const bcrypt = require('bcrypt');
+const nodersa = require('node-rsa');
 const assert = require('assert');
 const userHelper = require('./../../helpers/userHelper');
 
@@ -75,6 +76,50 @@ module.exports.getKey = async function(req, res) {
     } catch(err) {
         res.status(500).send().end();
         logger.error('Failed to fetch user, please try again later.');
+        console.log(err);
+    }
+};
+
+module.exports.postGenerateKeys = async function(req, res) {
+    let email = req.body.email;
+    let password = req.body.password;
+
+    if ((email == null) || (password == null)) {
+        res.status(400).send('You must provide an email and password').end();
+        return;
+    }
+
+    try {
+        let user = await userHelper.checkUser(email, password);
+        if (user === false) {
+            res.status(403).send('No such user exists, password incorrect, or not email verified.').end();
+            return;
+        }
+
+        // generate
+        let key = new nodersa();
+        key.generateKeyPair();
+        let publicPem = key.exportKey('public');
+        let privatePem = key.exportKey('private');
+
+        // update
+        let r = await db.collection('users').updateOne({
+            email: req.body.email
+        }, {$set: {
+                public_key: publicPem,
+                date_key_updated: new Date()
+            }});
+
+        // verify
+        assert.equal(r.matchedCount, 1);
+        assert.equal(r.modifiedCount, 1);
+
+        res.status(201).json({
+            'private_key': privatePem
+        }).send();
+    } catch(err) {
+        res.status(500).send().end();
+        logger.error('Failed to generate key-pair user, please try again later.');
         console.log(err);
     }
 };
