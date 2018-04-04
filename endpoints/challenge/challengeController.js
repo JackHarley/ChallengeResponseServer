@@ -44,6 +44,7 @@ module.exports.postBegin = async function(req, res) {
     } catch(err) {
         res.status(500).send('Failed to initiate challenge, please try again later..').end();
         logger.error('Failed to initiate challenge.');
+        console.log(err);
     }
 };
 
@@ -91,6 +92,7 @@ module.exports.getLookup = async function(req, res) {
     } catch(err) {
         res.status(500).send('Failed to lookup challenge, please try again later..').end();
         logger.error('Failed to lookup challenge.');
+        console.log(err);
     }
 };
 
@@ -122,6 +124,7 @@ module.exports.get = async function(req, res) {
     } catch(err) {
         res.status(500).send('Failed to query challenge, please try again later.').end();
         logger.error('Failed to query challenge.');
+        console.log(err);
     }
 };
 
@@ -171,5 +174,6 @@ module.exports.postComplete = async function(req, res) {
     } catch(err) {
         res.status(500).send('Failed to complete challenge, please try again later.').end();
         logger.error('Failed to complete challenge.');
+        console.log(err);
     }
 };
