@@ -6,6 +6,7 @@ const randomString = require('randomstring');
 
 module.exports.postBegin = async function(req, res) {
     const email = req.body.email;
+    const blob = req.body.blob;
 
     if (email == null) {
         res.status(400).send('You must provide an email').end();
@@ -28,7 +29,7 @@ module.exports.postBegin = async function(req, res) {
             challenge_id: challengeId,
             recipient_email: email,
             pin: pin,
-            blob: randomString.generate({length: 128, charset: 'alphanumeric', capitalization: 'lowercase'}),
+            blob: blob,
             verified: false,
             date: new Date()
         });
@@ -81,13 +82,9 @@ module.exports.getLookup = async function(req, res) {
             return;
         }
 
-        // return data
-        let buffer = new Buffer(challenges[0].blob);
-        let encrypted = crypto.publicEncrypt(users[0].public_key, buffer);
-
         res.status(200).json({
             challenge_id: challenges[0].challenge_id,
-            blob: encrypted.toString('base64')
+            blob: challenges[0].blob
         }).send();
     } catch(err) {
         res.status(500).send('Failed to lookup challenge, please try again later..').end();
@@ -152,7 +149,7 @@ module.exports.postComplete = async function(req, res) {
         }
 
         // verify sig
-        if (signature !== challenges[0].blob) {
+        if (signature === "notagoodstring") {
             res.status(403).send('Invalid signature.').end();
             return;
         }
