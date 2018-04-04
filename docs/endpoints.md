@@ -286,3 +286,26 @@ Look up the status of a challenge.
 * 1 - Challenge complete and verified.
 * 0 - Not yet completed.
 * -1 - Challenge failed (expired with no valid responses).
+
+POST /challenge/9386727543489512/complete
+------------------------------
+**URL Parameters:**
+
+* challengeId: e.g. /challenge/{challengeId}/complete
+
+**Body:**
+```json
+{
+    "pin": 9018,
+    "signature": "cl0dgbh93usfqct16l8oax0z05dwne24arsdlnl6olkqqu2wapamxzcwyjbc0v6ix4vhxbha4ado8ttmxsmv7zga5jdyv3r6s8v2mmgpi0q7m49xf0zz2pl0hi"
+}
+```
+
+Complete/respond to a challenge by sending back the decrypted blob data (i.e. the signature).
+
+**Responses:**
+
+* If the signature is verified and the challenge marked as completed successfully, 200 OK.
+* If any query/body parameters are not provided, 400 BAD REQUEST.
+* If the provided signature is invalid, 403 FORBIDDEN.
+* If an email address is provided but does not exist in the system/is not activated, 404 NOT FOUND.
