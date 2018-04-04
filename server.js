@@ -15,6 +15,7 @@ const bodyParser = require('body-parser');
 require('./db')().then((res) => {
     // Express server
     const server = express();
+    server.disable('etag');
 
     // Middleware
     logger.info("Loading middleware...");
